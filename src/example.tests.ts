@@ -1,8 +1,11 @@
-import { bisect, Result, Scene, Suspect, Version } from './bisect'
+import { Result, Scene, Suspect, Version } from './bisect'
+import { bisectSuccess } from './bisect.fixture'
 
 test('solve production example', () => {
   const scene = new ExampleScene()
-  expect(bisect('19.38.85', '19.38.129', scene)).toEqual('19.38.115')
+  const result = bisectSuccess('19.38.85', '19.38.129', scene)
+  expect(result.firstBad.version).toEqual('19.38.115')
+  expect(result.lastGood.version).toEqual('19.38.114')
   expect(scene.checkedVersions).toStrictEqual([
     '19.38.107',
     '19.38.118',
