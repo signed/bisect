@@ -73,26 +73,3 @@ class RecordingScene implements Scene {
     throw new Error(`unexpected version ${version}`)
   }
 }
-
-type Metadata = {
-  date: string
-  hash: string
-}
-
-class MetaScene implements Scene<Metadata> {
-  suspects(): Suspect<Metadata>[] {
-    return [
-      {
-        version: '19.38.133',
-        hash: 'git hash',
-        date: '2021-05-17',
-      },
-    ]
-  }
-
-  check(_candidate: Suspect<Metadata>): Result {
-    return 'good'
-  }
-}
-
-bisect('19.38.85', '19.38.130', new MetaScene())
