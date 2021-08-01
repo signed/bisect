@@ -1,21 +1,20 @@
 import type { Version } from './bisect'
-import { bisect } from './bisect'
-import { bisectSuccess, RecordingScene } from './bisect.fixture'
+import { bisectFail, bisectSuccess, RecordingScene } from './bisect.fixture'
 
 test('fail if good version is not in suspects', () => {
-  expect(bisect('good', 'does not matter', suspects())).toBe('good version not in suspects')
+  expect(bisectFail('good', 'does not matter', suspects())).toBe('good version not in suspects')
 })
 
 test('fail if bad version is not in suspects', () => {
-  expect(bisect('good', 'bad', suspects('good'))).toBe('bad version not in suspects')
+  expect(bisectFail('good', 'bad', suspects('good'))).toBe('bad version not in suspects')
 })
 
 test('suspects have be in order knowGood has to come before knownBad', () => {
-  expect(bisect('good', 'bad', suspects('bad', 'good'))).toBe('bad version before good version')
+  expect(bisectFail('good', 'bad', suspects('bad', 'good'))).toBe('bad version before good version')
 })
 
 test('knowGood and knownBad can not be the same', () => {
-  expect(bisect('same', 'same', suspects())).toEqual('knownGood and knowBad are the same')
+  expect(bisectFail('same', 'same', suspects())).toEqual('knownGood and knowBad are the same')
 })
 
 test('return knownBad if there is no bad version in between', () => {

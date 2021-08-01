@@ -8,6 +8,14 @@ export const bisectSuccess = <T extends object>(knownGood: string, knownBad: str
   return result
 }
 
+export const bisectFail = <T extends object>(knownGood: Version, knownBad: Version, scene: Scene<T>) => {
+  const result = bisect(knownGood, knownBad, scene)
+  if (typeof result !== 'string') {
+    throw new Error('expected bisect to fail')
+  }
+  return result
+}
+
 export class RecordingScene implements Scene {
   public readonly checkedVersions: Version[] = []
 
