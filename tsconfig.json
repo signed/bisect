@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "newLine": "lf",
+    "esModuleInterop": true,
+    "outDir": "out/dist",
+    "declaration": true,
+    "noEmitOnError": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+  },
+  "include": [
+    "src"
+  ]
+}
