@@ -4,7 +4,12 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "run": "yarn ts-node src/cli.tsx",
     "test": "jest"
+  },
+  "dependencies": {
+    "ink": "3.0.9",
+    "react": "17.0.2"
   },
   "devDependencies": {
     "@babel/core": "7.14.8",
@@ -12,9 +17,11 @@
     "@babel/preset-typescript": "7.14.5",
     "@types/jest": "26.0.24",
     "@types/node": "16.4.9",
+    "@types/react": "17.0.15",
     "jest": "27.0.6",
     "jest-extended": "0.11.5",
     "prettier": "2.3.2",
+    "ts-node": "10.1.0",
     "typescript": "4.3.5"
   }
 }
