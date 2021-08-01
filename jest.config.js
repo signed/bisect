@@ -2,7 +2,7 @@ module.exports = {
   verbose: false,
   setupFilesAfterEnv: ['jest-extended'],
   roots: ['<rootDir>/src'],
-  testMatch: ['<rootDir>/src/**/*.{spec,test,tests}.{ts,tsx}'],
+  testMatch: ['<rootDir>/src/**/*.tests.{ts,tsx}'],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
   },
