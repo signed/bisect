@@ -20,7 +20,7 @@ type BisectError =
 type BisectOutcome<T extends object = {}> = { lastGood: Suspect<T>; firstBad: Suspect<T> }
 type BisectResult<T extends object = {}> = BisectOutcome<T> | BisectError
 
-export function bisect<T extends object>(knownGood: Version, knownBad: Version, scene: Scene<T>): BisectResult {
+export const bisect = <T extends object>(knownGood: Version, knownBad: Version, scene: Scene<T>): BisectResult => {
   if (knownGood === knownBad) {
     return 'knownGood and knowBad are the same'
   }
