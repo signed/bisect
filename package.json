@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "run": "yarn ts-node src/cli.tsx",
     "test": "jest"
   },
