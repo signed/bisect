@@ -1,15 +1,15 @@
 import { bisect, Result, Scene, Suspect, Version } from './bisect'
 
-export const bisectSuccess = <T extends object>(knownGood: string, knownBad: string, scene: Scene<T>) => {
-  const result = bisect(knownGood, knownBad, scene)
+export const bisectSuccess = async <T extends object>(knownGood: string, knownBad: string, scene: Scene<T>) => {
+  const result = await bisect(knownGood, knownBad, scene)
   if (typeof result === 'string') {
     throw new Error('expected bisect to succeed')
   }
   return result
 }
 
-export const bisectFail = <T extends object>(knownGood: Version, knownBad: Version, scene: Scene<T>) => {
-  const result = bisect(knownGood, knownBad, scene)
+export const bisectFail = async <T extends object>(knownGood: Version, knownBad: Version, scene: Scene<T>) => {
+  const result = await bisect(knownGood, knownBad, scene)
   if (typeof result !== 'string') {
     throw new Error('expected bisect to fail')
   }

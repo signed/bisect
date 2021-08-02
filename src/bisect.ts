@@ -20,11 +20,15 @@ type BisectError =
 type BisectOutcome<T extends object = {}> = { lastGood: Suspect<T>; firstBad: Suspect<T> }
 type BisectResult<T extends object = {}> = BisectOutcome<T> | BisectError
 
-export const bisect = <T extends object>(knownGood: Version, knownBad: Version, scene: Scene<T>): BisectResult => {
+export const bisect = async <T extends object>(
+  knownGood: Version,
+  knownBad: Version,
+  scene: Scene<T>,
+): Promise<BisectResult> => {
   if (knownGood === knownBad) {
     return 'knownGood and knowBad are the same'
   }
-  const suspects = scene.suspects()
+  const suspects = await scene.suspects()
   const { start, end } = suspects.reduce(
     (acc, cur, index) => {
       if (cur.version === knownGood) {
@@ -52,7 +56,7 @@ export const bisect = <T extends object>(knownGood: Version, knownBad: Version, 
   let parts = split(candidates)
 
   while (parts.center) {
-    const result = scene.check(parts.center)
+    const result = await scene.check(parts.center)
     let foundEarlierBad = result === 'bad'
     if (foundEarlierBad) {
       firstBad = parts.center
