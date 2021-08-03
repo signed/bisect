@@ -8,7 +8,7 @@ export type Metadata = {
 export class ExampleScene implements Scene<Metadata> {
   readonly checkedVersions: Version[] = []
 
-  suspects(): Suspect<Metadata>[] {
+  async suspects(): Promise<Suspect<Metadata>[]> {
     return readTagsFromGit()
       .trim()
       .split('\n')
@@ -29,11 +29,12 @@ export class ExampleScene implements Scene<Metadata> {
       })
   }
 
-  check(candidate: Suspect<Metadata>): Result {
+  async check(candidate: Suspect<Metadata>): Promise<Result> {
     this.checkedVersions.push(candidate.version)
     return runAutomatedCheckAndReportBackFor(candidate)
   }
 }
+
 export const readTagsFromGit = () => {
   return `
 2021-07-30 @production/application@19.38.129 a677a8d86a4cb5ec82df4011deb73dc829e5f2af  -

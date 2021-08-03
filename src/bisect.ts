@@ -4,10 +4,10 @@ export type Version = string
 export type Suspect<T extends object = {}> = { version: Version } & T
 
 export type Result = 'good' | 'bad'
-export type Check<T extends object = {}> = (candidate: Suspect<T>) => Result
+export type Check<T extends object = {}> = (candidate: Suspect<T>) => Promise<Result>
 
 export interface Scene<T extends object = {}> {
-  suspects: () => Suspect<T>[]
+  suspects: () => Promise<Suspect<T>[]>
   check: Check<T>
 }
 

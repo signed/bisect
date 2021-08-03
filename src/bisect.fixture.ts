@@ -21,11 +21,11 @@ export class RecordingScene implements Scene {
 
   constructor(private readonly _suspects: Suspect[] = []) {}
 
-  suspects(): Suspect[] {
+  async suspects(): Promise<Suspect[]> {
     return this._suspects
   }
 
-  check(suspect: Suspect): Result {
+  async check(suspect: Suspect): Promise<Result> {
     const version = suspect.version
     if (version.includes('before')) {
       throw new Error('you should not check suspects before knowGood')
