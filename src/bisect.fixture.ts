@@ -40,6 +40,9 @@ export class RecordingScene implements Scene {
       throw new Error('you should not check known bad')
     }
     this.checkedVersions.push(version)
+    if (version.includes('skip')) {
+      return 'skip'
+    }
     if (version.includes('bad')) {
       return 'bad'
     }

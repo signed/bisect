@@ -1,9 +1,9 @@
-import { split } from './arrays'
+import { Split, split } from './arrays'
 
 export type Version = string
 export type Suspect<T extends object = {}> = { version: Version } & T
 
-export type Result = 'good' | 'bad'
+export type Result = 'good' | 'bad' | 'skip'
 export type Check<T extends object = {}> = (candidate: Suspect<T>) => Promise<Result>
 
 export interface Scene<T extends object = {}> {
@@ -20,6 +20,12 @@ type BisectError =
 type BisectOutcome<T extends object = {}> = { lastGood: Suspect<T>; firstBad: Suspect<T> }
 type BisectResult<T extends object = {}> = BisectOutcome<T> | BisectError
 
+let inputForNextIteration = <T>(result: 'good' | 'bad' | 'skip', parts: Split<T>) => {
+  if (result === 'skip') {
+    return [...parts.left, ...parts.right]
+  }
+  return result === 'bad' ? parts.left : parts.right
+}
 export const bisect = async <T extends object>(
   knownGood: Version,
   knownBad: Version,
@@ -57,13 +63,14 @@ export const bisect = async <T extends object>(
 
   while (parts.center) {
     const result = await scene.check(parts.center)
-    let foundEarlierBad = result === 'bad'
-    if (foundEarlierBad) {
+    if (result === 'bad') {
       firstBad = parts.center
-    } else {
+    }
+    if (result === 'good') {
       lastGood = parts.center
     }
-    parts = split(foundEarlierBad ? parts.left : parts.right)
+    const input = inputForNextIteration(result, parts)
+    parts = split(input)
   }
 
   return { lastGood, firstBad }

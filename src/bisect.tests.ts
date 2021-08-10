@@ -43,6 +43,14 @@ test('test the center suspect instead of every single one', async () => {
   expect(scene.checkedVersions).toEqual(['center good', '1st bad'])
 })
 
+test('skip versions where you can not decide if it is good or bad', async () => {
+  const scene = suspects('good', '2nd good', 'center skip', '1st bad', 'bad')
+  const result = await bisectSuccess('good', 'bad', scene)
+  expect(result.firstBad.version).toBe('1st bad')
+  expect(result.lastGood.version).toBe('2nd good')
+  expect(scene.checkedVersions).toEqual(['center skip', '2nd good', '1st bad'])
+})
+
 const suspects = (...versions: Version[]) => {
   const suspects = versions.map((version) => ({ version }))
   return new RecordingScene(suspects)
