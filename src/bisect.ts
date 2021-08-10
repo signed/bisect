@@ -20,7 +20,7 @@ type BisectError =
 type BisectOutcome<T extends object = {}> = { lastGood: Suspect<T>; firstBad: Suspect<T> }
 type BisectResult<T extends object = {}> = BisectOutcome<T> | BisectError
 
-let remainingSuspectsFrom = <T>(parts: Split<T>, result: 'good' | 'bad' | 'skip') => {
+const remainingSuspectsFrom = <T>(parts: Split<T>, result: 'good' | 'bad' | 'skip') => {
   if (result === 'skip') {
     return [...parts.left, ...parts.right]
   }
