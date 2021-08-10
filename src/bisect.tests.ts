@@ -29,13 +29,13 @@ test('only check versions between knownGood and knownBad', async () => {
   expect(result.firstBad.version).toBe('1st bad')
 })
 
-test('return the first bad version between knownGood and knowBad and', async () => {
+test('return the first bad version between knownGood and knowBad', async () => {
   const result = await bisectSuccess('good', 'bad', suspects('good', '1st bad', 'bad'))
   expect(result.lastGood.version).toBe('good')
   expect(result.firstBad.version).toBe('1st bad')
 })
 
-test('test the center suspect instead of ever single one', async () => {
+test('test the center suspect instead of every single one', async () => {
   const scene = suspects('good', '2nd good', 'center good', '1st bad', 'bad')
   const result = await bisectSuccess('good', 'bad', scene)
   expect(result.firstBad.version).toBe('1st bad')
