@@ -26,15 +26,8 @@ const remainingSuspectsFrom = <T>(parts: Split<T>, result: 'good' | 'bad' | 'ski
   }
   return result === 'bad' ? parts.left : parts.right
 }
-export const bisect = async <T extends object>(
-  knownGood: Version,
-  knownBad: Version,
-  scene: Scene<T>,
-): Promise<BisectResult> => {
-  if (knownGood === knownBad) {
-    return 'knownGood and knowBad are the same'
-  }
-  const suspects = await scene.suspects()
+
+const validateInput = <T extends object>(knownGood: Version, knownBad: Version, suspects: Suspect<T>[]) => {
   const { start, end } = suspects.reduce(
     (acc, cur, index) => {
       if (cur.version === knownGood) {
@@ -59,6 +52,33 @@ export const bisect = async <T extends object>(
   let lastGood = suspects[start] as Suspect<T>
   let firstBad = suspects[end] as Suspect<T>
   const candidates = suspects.splice(start + 1, end - 1)
+
+  return {
+    lastGood,
+    firstBad,
+    candidates,
+  }
+}
+
+export const bisect = async <T extends object>(
+  knownGood: Version,
+  knownBad: Version,
+  scene: Scene<T>,
+): Promise<BisectResult> => {
+  if (knownGood === knownBad) {
+    return 'knownGood and knowBad are the same'
+  }
+  const suspects = await scene.suspects()
+  const validadtionResult = validateInput(knownGood, knownBad, suspects)
+
+  if (typeof validadtionResult === 'string') {
+    return validadtionResult
+  }
+
+  let lastGood = validadtionResult.lastGood
+  let firstBad = validadtionResult.firstBad
+  const candidates = validadtionResult.candidates
+
   let parts = split(candidates)
 
   while (parts.center) {
