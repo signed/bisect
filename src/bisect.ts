@@ -1,6 +1,6 @@
-import { Split, split } from './arrays'
+import { chain, Either, isLeft, left, map, right } from 'fp-ts/Either'
 import { pipe } from 'fp-ts/function'
-import { Either, left, right, isLeft, chain } from 'fp-ts/Either'
+import { Split, split } from './arrays'
 
 export type Version = string
 export type Suspect<T extends object = {}> = { version: Version } & T
@@ -75,21 +75,22 @@ const validateInput = <T extends object>(
     },
     { start: -1, end: -1 },
   )
-
-  const pipe1 = pipe(includesGoodVersion({ start, end }), chain(includesBadVersion), chain(goodBeforeBadVersion))
-
-  if (isLeft(pipe1)) {
-    return pipe1
+  const createValidatedResult = ({ start, end }: StartEnd) => {
+    const lastGood = suspects[start] as Suspect<T>
+    const firstBad = suspects[end] as Suspect<T>
+    const candidates = suspects.splice(start + 1, end - 1)
+    return {
+      lastGood,
+      firstBad,
+      candidates,
+    }
   }
-  let lastGood = suspects[start] as Suspect<T>
-  let firstBad = suspects[end] as Suspect<T>
-  const candidates = suspects.splice(start + 1, end - 1)
-
-  return right({
-    lastGood,
-    firstBad,
-    candidates,
-  })
+  return pipe(
+    includesGoodVersion({ start, end }),
+    chain(includesBadVersion),
+    chain(goodBeforeBadVersion),
+    map(createValidatedResult),
+  )
 }
 
 export const bisect = async <T extends object>(
