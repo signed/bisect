@@ -1,5 +1,5 @@
 import { chain, Either, isLeft, left, map, right } from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
+import { flow } from 'fp-ts/function'
 import { Split, split } from './arrays'
 
 export type Version = string
@@ -85,12 +85,12 @@ const validateInput = <T extends object>(
       candidates,
     }
   }
-  return pipe(
-    includesGoodVersion(startEnd),
+  return flow(
+    includesGoodVersion,
     chain(includesBadVersion),
     chain(goodBeforeBadVersion),
     map(createValidatedResult),
-  )
+  )(startEnd)
 }
 
 export const bisect = async <T extends object>(
