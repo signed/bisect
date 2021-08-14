@@ -1,5 +1,6 @@
 import { Split, split } from './arrays'
-import { Either, Left, Right } from 'purify-ts'
+import { pipe } from 'fp-ts/function'
+import { Either, left, right, isLeft, chain } from 'fp-ts/Either'
 
 export type Version = string
 export type Suspect<T extends object = {}> = { version: Version } & T
@@ -35,6 +36,28 @@ type ValidatedInput<T extends object> = {
 }
 type ValidationResult<T extends object> = Either<BisectError, ValidatedInput<T>>
 
+type StartEnd = { start: number; end: number }
+const includesGoodVersion = (se: StartEnd): Either<BisectError, StartEnd> => {
+  if (se.start === -1) {
+    return left('good version not in suspects')
+  }
+  return right(se)
+}
+
+const includesBadVersion = (se: StartEnd): Either<BisectError, StartEnd> => {
+  if (se.end === -1) {
+    return left('bad version not in suspects')
+  }
+  return right(se)
+}
+
+const goodBeforeBadVersion = (se: StartEnd): Either<BisectError, StartEnd> => {
+  if (se.end < se.start) {
+    return left('bad version before good version')
+  }
+  return right(se)
+}
+
 const validateInput = <T extends object>(
   knownGood: Version,
   knownBad: Version,
@@ -52,20 +75,17 @@ const validateInput = <T extends object>(
     },
     { start: -1, end: -1 },
   )
-  if (start === -1) {
-    return Left('good version not in suspects')
-  }
-  if (end === -1) {
-    return Left('bad version not in suspects')
-  }
-  if (end < start) {
-    return Left('bad version before good version')
+
+  const pipe1 = pipe(includesGoodVersion({ start, end }), chain(includesBadVersion), chain(goodBeforeBadVersion))
+
+  if (isLeft(pipe1)) {
+    return pipe1
   }
   let lastGood = suspects[start] as Suspect<T>
   let firstBad = suspects[end] as Suspect<T>
   const candidates = suspects.splice(start + 1, end - 1)
 
-  return Right({
+  return right({
     lastGood,
     firstBad,
     candidates,
@@ -83,31 +103,27 @@ export const bisect = async <T extends object>(
   const suspects = await scene.suspects()
   const validadtionResult = validateInput(knownGood, knownBad, suspects)
 
-  if (validadtionResult.isLeft()) {
-    return validadtionResult.extract()
+  if (isLeft(validadtionResult)) {
+    return validadtionResult.left
   }
 
-  if (validadtionResult.isRight()) {
-    const validatedInput = validadtionResult.extract()
-    let lastGood = validatedInput.lastGood
-    let firstBad = validatedInput.firstBad
-    const candidates = validatedInput.candidates
+  const validatedInput = validadtionResult.right
+  let lastGood = validatedInput.lastGood
+  let firstBad = validatedInput.firstBad
+  const candidates = validatedInput.candidates
 
-    let parts = split(candidates)
+  let parts = split(candidates)
 
-    while (parts.center) {
-      const result = await scene.check(parts.center)
-      if (result === 'bad') {
-        firstBad = parts.center
-      }
-      if (result === 'good') {
-        lastGood = parts.center
-      }
-      parts = split(remainingSuspectsFrom(parts, result))
+  while (parts.center) {
+    const result = await scene.check(parts.center)
+    if (result === 'bad') {
+      firstBad = parts.center
     }
-
-    return { lastGood, firstBad }
+    if (result === 'good') {
+      lastGood = parts.center
+    }
+    parts = split(remainingSuspectsFrom(parts, result))
   }
 
-  throw new Error('should never happen')
+  return { lastGood, firstBad }
 }
