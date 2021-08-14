@@ -63,7 +63,7 @@ const validateInput = <T extends object>(
   knownBad: Version,
   suspects: Suspect<T>[],
 ): ValidationResult<T> => {
-  const { start, end } = suspects.reduce(
+  const startEnd = suspects.reduce(
     (acc, cur, index) => {
       if (cur.version === knownGood) {
         acc.start = index
@@ -86,7 +86,7 @@ const validateInput = <T extends object>(
     }
   }
   return pipe(
-    includesGoodVersion({ start, end }),
+    includesGoodVersion(startEnd),
     chain(includesBadVersion),
     chain(goodBeforeBadVersion),
     map(createValidatedResult),
