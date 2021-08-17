@@ -20,8 +20,8 @@ const items: Item<Action>[] = [
 type Action = 'rerun' | Result
 
 interface AppProps {
-  onSelection: (item: Item<Action>) => void
   done: boolean
+  onSelection?: (item: Item<Action>) => void
   toCheck?: Suspect
 }
 
@@ -46,7 +46,7 @@ const App = (props: AppProps) => {
     if (result !== 'rerun') {
       setCheckResults((cur) => [...cur, { result, version: props.toCheck?.version ?? 'should not happen' }])
     }
-    props.onSelection(item)
+    props.onSelection?.(item)
   }
 
   return (
@@ -89,9 +89,6 @@ class ApplicationHandle {
 }
 
 const handle = new ApplicationHandle()
-const selectionHandler = (_item: Item<Action>) => {
-  //do nothing
-}
 
 export class ExampleScene2 implements Scene<Metadata> {
   async suspects(): Promise<Suspect<Metadata>[]> {
@@ -134,4 +131,4 @@ bisect('19.38.85', '19.38.129', new ExampleScene2()).then((result) => {
   console.log(JSON.stringify(result, null, 2))
 })
 
-handle.render({ done: false, onSelection: selectionHandler })
+handle.render({ done: false })
