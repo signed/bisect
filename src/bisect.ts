@@ -18,9 +18,6 @@ export const bisect = async <T extends object>(
   knownBad: Version,
   scene: Scene<T>,
 ): Promise<BisectOutcome> => {
-  if (knownGood === knownBad) {
-    return 'knownGood and knowBad are the same'
-  }
   const suspects = await scene.suspects()
   const validadtionResult = validateInput(knownGood, knownBad, suspects)
 
@@ -64,9 +61,9 @@ const validateInput = <T extends object>(
       }
       return acc
     },
-    { start: -1, end: -1 },
+    { start: -1, end: -1, knownGood, knownBad },
   )
-  const createValidatedResult = ({ start, end }: StartEnd) => {
+  const createValidatedResult = ({ start, end }: ValidationInput) => {
     const lastGood = suspects[start] as Suspect<T>
     const firstBad = suspects[end] as Suspect<T>
     const candidates = suspects.slice(start + 1, end)
@@ -77,7 +74,8 @@ const validateInput = <T extends object>(
     }
   }
   return flow(
-    includesGoodVersion,
+    knowGoodAndKnowBadAreDifferent,
+    chain(includesGoodVersion),
     chain(includesBadVersion),
     chain(goodBeforeBadVersion),
     map(createValidatedResult),
@@ -89,24 +87,31 @@ type ValidatedInput<T extends object> = {
   firstBad: Suspect<T>
   candidates: Suspect<T>[]
 }
+type ValidationInput = { start: number; end: number; knownGood: Version; knownBad: Version }
 type ValidationResult<T extends object> = Either<BisectError, ValidatedInput<T>>
 
-type StartEnd = { start: number; end: number }
-const includesGoodVersion = (se: StartEnd): Either<BisectError, StartEnd> => {
+const knowGoodAndKnowBadAreDifferent = (se: ValidationInput): Either<BisectError, ValidationInput> => {
+  if (se.knownGood === se.knownBad) {
+    return left('knownGood and knowBad are the same')
+  }
+  return right(se)
+}
+
+const includesGoodVersion = (se: ValidationInput): Either<BisectError, ValidationInput> => {
   if (se.start === -1) {
     return left('good version not in suspects')
   }
   return right(se)
 }
 
-const includesBadVersion = (se: StartEnd): Either<BisectError, StartEnd> => {
+const includesBadVersion = (se: ValidationInput): Either<BisectError, ValidationInput> => {
   if (se.end === -1) {
     return left('bad version not in suspects')
   }
   return right(se)
 }
 
-const goodBeforeBadVersion = (se: StartEnd): Either<BisectError, StartEnd> => {
+const goodBeforeBadVersion = (se: ValidationInput): Either<BisectError, ValidationInput> => {
   if (se.end < se.start) {
     return left('bad version before good version')
   }
