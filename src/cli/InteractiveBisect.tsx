@@ -17,6 +17,7 @@ const items: Item<Action>[] = [
   { label: 'rerun action', value: 'rerun' },
   { label: 'mark as good', value: 'good' },
   { label: 'mark as bad', value: 'bad' },
+  { label: 'can not tell', value: 'skip' },
 ]
 type Action = 'rerun' | Result
 
@@ -29,6 +30,17 @@ export interface InteractiveBisectProps {
 interface CheckResult {
   version: Version
   result: Result
+}
+
+const emojiFor = (result: CheckResult): string => {
+  switch (result.result) {
+    case 'good':
+      return '✅'
+    case 'bad':
+      return '❌'
+    case 'skip':
+      return '💥'
+  }
 }
 
 export const InteractiveBisect = (props: InteractiveBisectProps) => {
@@ -53,9 +65,9 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
   return (
     <>
       <Static items={checkResults}>
-        {(test) => (
-          <Box key={test.version}>
-            <Text color="green">{(test.result === 'good' ? '✅' : '❌') + ' ' + test.version}</Text>
+        {(result) => (
+          <Box key={result.version}>
+            <Text color="green">{emojiFor(result) + ' ' + result.version}</Text>
           </Box>
         )}
       </Static>
