@@ -78,7 +78,7 @@ const validateInput = <T extends object>(
   const createValidatedResult = ({ start, end }: StartEnd) => {
     const lastGood = suspects[start] as Suspect<T>
     const firstBad = suspects[end] as Suspect<T>
-    const candidates = suspects.splice(start + 1, end - 1)
+    const candidates = suspects.slice(start + 1, end)
     return {
       lastGood,
       firstBad,
