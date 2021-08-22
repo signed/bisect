@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { bisect } from './bisect'
+import { bisect } from './bisect/bisect'
 import { CommandLine } from './cli/CommandLine'
 import { InteractiveScene } from './cli/InteractiveBisect'
 
