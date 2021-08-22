@@ -1,5 +1,5 @@
-import type { Version } from './bisect'
 import { bisectFail, bisectSuccess, RecordingScene } from './bisect.fixture'
+import { Version } from './version'
 
 test('fail if good version is not in suspects', async () => {
   expect(await bisectFail('good', 'does not matter', suspects())).toBe('good version not in suspects')

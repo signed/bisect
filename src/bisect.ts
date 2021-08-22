@@ -1,32 +1,23 @@
 import { chain, Either, isLeft, left, map, right } from 'fp-ts/Either'
 import { flow } from 'fp-ts/function'
 import { Split, split } from './arrays'
+import { Scene } from './scene'
+import { Suspect } from './suspect'
+import { Version } from './version'
 
-export type Version = string
-export type Suspect<T extends object = {}> = { version: Version } & T
-
-export type Result = 'good' | 'bad' | 'skip'
-export type Check<T extends object = {}> = (candidate: Suspect<T>) => Promise<Result>
-
-export interface Scene<T extends object = {}> {
-  suspects: () => Promise<Suspect<T>[]>
-  check: Check<T>
-}
-
+type BisectOutcome<T extends object = {}> = BisectResult<T> | BisectError
+type BisectResult<T extends object = {}> = { lastGood: Suspect<T>; firstBad: Suspect<T> }
 type BisectError =
   | 'knownGood and knowBad are the same'
   | 'good version not in suspects'
   | 'bad version not in suspects'
   | 'bad version before good version'
 
-type BisectOutcome<T extends object = {}> = { lastGood: Suspect<T>; firstBad: Suspect<T> }
-type BisectResult<T extends object = {}> = BisectOutcome<T> | BisectError
-
 export const bisect = async <T extends object>(
   knownGood: Version,
   knownBad: Version,
   scene: Scene<T>,
-): Promise<BisectResult> => {
+): Promise<BisectOutcome> => {
   if (knownGood === knownBad) {
     return 'knownGood and knowBad are the same'
   }

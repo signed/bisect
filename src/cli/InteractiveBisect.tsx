@@ -1,8 +1,10 @@
 import { Box, Static, Text, useApp } from 'ink'
 import SelectInput from 'ink-select-input'
 import React, { useEffect, useState } from 'react'
-import { Result, Scene, Suspect, Version } from '../bisect'
 import { Metadata, readTagsFromGit } from '../example'
+import { Result, Scene } from '../scene'
+import { Suspect } from '../suspect'
+import { Version } from '../version'
 import { CommandLine } from './CommandLine'
 
 export interface Item<V> {

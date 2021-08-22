@@ -1,4 +1,7 @@
-import { bisect, Result, Scene, Suspect, Version } from './bisect'
+import { bisect } from './bisect'
+import { Result, Scene } from './scene'
+import { Suspect } from './suspect'
+import { Version } from './version'
 
 export const bisectSuccess = async <T extends object>(knownGood: string, knownBad: string, scene: Scene<T>) => {
   const result = await bisect(knownGood, knownBad, scene)
