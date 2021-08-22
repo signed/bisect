@@ -18,18 +18,11 @@ export const bisect = async <T extends object>(
   knownBad: Version,
   scene: Scene<T>,
 ): Promise<BisectOutcome> => {
-  const suspects = await scene.suspects()
-  const validadtionResult = validateInput(knownGood, knownBad, suspects)
-
+  const validadtionResult = validateInput(knownGood, knownBad, await scene.suspects())
   if (isLeft(validadtionResult)) {
     return validadtionResult.left
   }
-
-  const validatedInput = validadtionResult.right
-  let lastGood = validatedInput.lastGood
-  let firstBad = validatedInput.firstBad
-  const candidates = validatedInput.candidates
-
+  let { candidates, firstBad, lastGood } = validadtionResult.right
   let parts = split(candidates)
 
   while (parts.center) {
