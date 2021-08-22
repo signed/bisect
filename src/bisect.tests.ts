@@ -24,9 +24,11 @@ test('return knownBad if there is no bad version in between', async () => {
 })
 
 test('only check versions between knownGood and knownBad', async () => {
-  const result = await bisectSuccess('good', 'bad', suspects('before good', 'good', '1st bad', 'bad', 'after bad'))
+  const scene = suspects('before good', 'good', '1st bad', 'bad', 'after bad')
+  const result = await bisectSuccess('good', 'bad', scene)
   expect(result.lastGood.version).toBe('good')
   expect(result.firstBad.version).toBe('1st bad')
+  expect(scene.checkedVersions).toEqual(['1st bad'])
 })
 
 test('return the first bad version between knownGood and knowBad', async () => {
