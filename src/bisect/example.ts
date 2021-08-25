@@ -1,11 +1,7 @@
+import { Metadata } from '../cli'
 import { Result, Scene } from './scene'
 import { Suspect } from './suspect'
 import { Version } from './version'
-
-export type Metadata = {
-  date: string
-  hash: string
-}
 
 export class ExampleScene implements Scene<Metadata> {
   readonly checkedVersions: Version[] = []
