@@ -1,7 +1,7 @@
 import { Box, Static, Text, useApp } from 'ink'
 import SelectInput from 'ink-select-input'
 import React, { useEffect, useState } from 'react'
-import { Metadata, readTagsFromGit } from '../example'
+import { Metadata, readTagsFromGit } from '../bisect/example'
 import { Result, Scene } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
