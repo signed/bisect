@@ -1,6 +1,6 @@
-import { Result, Scene } from './bisect/scene'
-import { Suspect } from './bisect/suspect'
-import { Version } from './bisect/version'
+import { Result, Scene } from './scene'
+import { Suspect } from './suspect'
+import { Version } from './version'
 
 export type Metadata = {
   date: string
