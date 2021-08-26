@@ -1,7 +1,6 @@
 import { Box, Static, Text, useApp } from 'ink'
 import SelectInput from 'ink-select-input'
 import React, { useEffect, useState } from 'react'
-import { readTagsFromGit } from '../bisect/example'
 import { Result, Scene } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
@@ -82,26 +81,10 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
 }
 
 export class InteractiveScene implements Scene<Metadata> {
-  constructor(private readonly handle: CommandLine) {}
+  constructor(private readonly handle: CommandLine, private readonly suspect: () => Promise<Suspect<Metadata>[]>) {}
+
   async suspects(): Promise<Suspect<Metadata>[]> {
-    return readTagsFromGit()
-      .trim()
-      .split('\n')
-      .reverse()
-      .map((line): Suspect<Metadata> => {
-        const parts = line.split(' ')
-        const [date, tag, hash] = parts
-        if (date === undefined || tag === undefined || hash === undefined) {
-          throw new Error('should not happen')
-        }
-        const start = tag.lastIndexOf('@')
-        const version = tag.substring(start + 1)
-        return {
-          version,
-          hash,
-          date,
-        }
-      })
+    return this.suspect()
   }
 
   async check(candidate: Suspect<Metadata>): Promise<Result> {
