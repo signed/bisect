@@ -19,7 +19,7 @@ const items: Item<Action>[] = [
   { label: 'mark as bad', value: 'bad' },
   { label: 'can not tell', value: 'skip' },
 ]
-type Action = 'rerun' | Result
+export type Action = 'rerun' | Result
 
 export interface InteractiveBisectProps {
   done: boolean
