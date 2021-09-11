@@ -5,9 +5,9 @@ import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
 
 export type VersionExtractor = (html: string) => Either<string, Version>
-export type UrlProvider<T extends object> = (suspect: Readonly<Suspect<T>>) => string
+export type UrlProvider<T extends object> = (suspect: Suspect<T>) => string
 export type CheckResult = 'passed' | Result
-export type Check<T extends object> = (suspect: Readonly<Suspect<T>>) => Promise<CheckResult>
+export type Check<T extends object> = (suspect: Suspect<T>) => Promise<CheckResult>
 
 export const properlyDeployed = <T extends object>(urlFor: UrlProvider<T>, extractVersionFrom: VersionExtractor) => {
   const bound: Check<T> = async (suspect) => {
