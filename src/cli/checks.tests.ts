@@ -5,17 +5,6 @@ import { properlyDeployed } from './checks'
 
 export const { deploy, connectionProblems } = serverRule()
 
-const check = properlyDeployed(
-  () => 'http://localhost',
-  (html) => {
-    const version = html.split(':')[1]
-    if (version === undefined) {
-      return left('this is unexpected')
-    }
-    return right(version)
-  },
-)
-
 test('pass deploy check if deployed version matches suspect', async () => {
   deploy('matching-version', 'http://localhost')
 
@@ -33,3 +22,14 @@ test('skip if connection fails', async () => {
 
   expect(await check({ version: 'different-version' })).toEqual('skip')
 })
+
+const check = properlyDeployed(
+  () => 'http://localhost',
+  (html) => {
+    const version = html.split(':')[1]
+    if (version === undefined) {
+      return left('this is unexpected')
+    }
+    return right(version)
+  },
+)
