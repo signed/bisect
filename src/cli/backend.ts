@@ -25,8 +25,14 @@ export const serverRule = () => {
     )
   }
 
+  const connectionProblems = () => {
+    // connection will be refused
+    server.resetHandlers()
+  }
+
   return {
     server,
     deploy,
+    connectionProblems,
   }
 }

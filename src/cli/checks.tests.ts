@@ -3,7 +3,7 @@ import { left, right } from 'fp-ts/Either'
 import { serverRule } from './backend'
 import { properlyDeployed } from './checks'
 
-export const { deploy } = serverRule()
+export const { deploy, connectionProblems } = serverRule()
 
 const check = properlyDeployed(
   () => 'http://localhost',
@@ -22,8 +22,14 @@ test('pass deploy check if deployed version matches suspect', async () => {
   expect(await check({ version: 'matching-version' })).toEqual('passed')
 })
 
-test('skip deploy check if deployed version does not match suspect', async () => {
+test('skip if deployed version does not match suspect', async () => {
   deploy('deployed-version', 'http://localhost')
+
+  expect(await check({ version: 'different-version' })).toEqual('skip')
+})
+
+test('skip if connection fails', async () => {
+  connectionProblems()
 
   expect(await check({ version: 'different-version' })).toEqual('skip')
 })

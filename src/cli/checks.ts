@@ -11,19 +11,23 @@ export type Check<T extends object> = (suspect: Suspect<T>) => Promise<CheckResu
 
 export const properlyDeployed = <T extends object>(urlFor: UrlProvider<T>, extractVersionFrom: VersionExtractor) => {
   const bound: Check<T> = async (suspect) => {
-    const url = urlFor(suspect)
-    const { version } = suspect
-    const response = await needle('get', url)
-    const page = response.raw.toString()
-    const versionFromPage = extractVersionFrom(page)
-    if (isLeft(versionFromPage)) {
+    try {
+      const url = urlFor(suspect)
+      const { version } = suspect
+      const response = await needle('get', url)
+      const page = response.raw.toString()
+      const versionFromPage = extractVersionFrom(page)
+      if (isLeft(versionFromPage)) {
+        return 'skip'
+      }
+      const failedDeployment = versionFromPage.right !== version
+      if (failedDeployment) {
+        return 'skip'
+      }
+      return 'passed'
+    } catch (_) {
       return 'skip'
     }
-    const failedDeployment = versionFromPage.right !== version
-    if (failedDeployment) {
-      return 'skip'
-    }
-    return 'passed'
   }
   return bound
 }
