@@ -14,12 +14,11 @@ export interface Item<V> {
 }
 
 const items: Item<Action>[] = [
-  { label: 'rerun action', value: 'rerun' },
   { label: 'mark as good', value: 'good' },
   { label: 'mark as bad', value: 'bad' },
   { label: 'can not tell', value: 'skip' },
 ]
-export type Action = 'rerun' | Result
+export type Action = Result
 
 export interface InteractiveBisectProps {
   done: boolean
@@ -56,9 +55,7 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
 
   const onSelection = (item: Item<Action>) => {
     const result = item.value
-    if (result !== 'rerun') {
-      setCheckResults((cur) => [...cur, { result, version: props.toCheck?.version ?? 'should not happen' }])
-    }
+    setCheckResults((cur) => [...cur, { result, version: props.toCheck?.version ?? 'should not happen' }])
     props.onSelection?.(item)
   }
 
@@ -90,12 +87,7 @@ export class InteractiveScene implements Scene<Metadata> {
   async check(candidate: Suspect<Metadata>): Promise<Result> {
     return new Promise((resolve) => {
       const onSelection = (item: Item<Action>) => {
-        const value = item.value
-        if (value === 'rerun') {
-          //todo
-          return
-        }
-        resolve(value)
+        resolve(item.value)
       }
       this.handle.rerender({ toCheck: candidate, onSelection })
     })
