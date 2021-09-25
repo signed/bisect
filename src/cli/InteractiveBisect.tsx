@@ -3,9 +3,9 @@ import SelectInput from 'ink-select-input'
 import React, { useEffect } from 'react'
 import { Result, Scene } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
-import { Version } from '../bisect/version'
 import { Metadata } from '../cli'
 import { CommandLine } from './CommandLine'
+import { Conclusion } from './conclusion'
 
 export interface Item<V> {
   key?: string
@@ -18,18 +18,13 @@ const items: Item<Action>[] = [
   { label: 'mark as bad', value: 'bad' },
   { label: 'can not tell', value: 'skip' },
 ]
-export type Action = Result
+type Action = Result
 
 export interface InteractiveBisectProps {
   done: boolean
   conclusions: Conclusion[]
   onResult?: (item: Result) => void
   toCheck?: Suspect
-}
-
-interface Conclusion {
-  version: Version
-  result: Result
 }
 
 const emojiFor = (conclusion: Conclusion): string => {
