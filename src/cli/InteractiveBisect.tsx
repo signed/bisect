@@ -62,9 +62,11 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
           </Box>
         )}
       </Static>
-      <Text>
-        Check <Text color="yellow">{props.toCheck ?? 'waiting'}</Text>
-      </Text>
+      {!done && (
+        <Text>
+          Check <Text color="yellow">{props.toCheck ?? 'waiting'}</Text>
+        </Text>
+      )}
 
       {props.toCheck && props.onResult && <SelectInput items={items} onSelect={onSelection} />}
     </>
