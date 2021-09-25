@@ -3,7 +3,7 @@ import needle from 'needle'
 import { Result } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
-import { BisectContext } from '../cli'
+import { BisectContext } from './BisectContext'
 
 export type VersionExtractor = (html: string) => Either<string, Version>
 export type UrlProvider<T extends object> = (suspect: Suspect<T>) => string
