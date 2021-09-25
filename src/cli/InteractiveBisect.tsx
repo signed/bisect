@@ -8,7 +8,7 @@ import { BisectContext, Metadata, OnResult } from '../cli'
 import { interactiveCheck } from './checks'
 import { Conclusion } from './conclusion'
 
-export interface Item<V> {
+interface Item<V> {
   key?: string
   label: string
   value: V
