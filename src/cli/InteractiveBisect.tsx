@@ -70,7 +70,7 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
         Check <Text color="yellow">{props.toCheck?.version ?? 'waiting'}</Text>
       </Text>
 
-      <SelectInput items={items} onSelect={onSelection} />
+      {props.toCheck && props.onResult && <SelectInput items={items} onSelect={onSelection} />}
     </>
   )
 }
