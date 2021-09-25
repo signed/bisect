@@ -3,7 +3,7 @@ import SelectInput from 'ink-select-input'
 import React, { useEffect } from 'react'
 import { Result, Scene } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
-import { Metadata } from '../cli'
+import { BisectContext, Metadata } from '../cli'
 import { CommandLine } from './CommandLine'
 import { Conclusion } from './conclusion'
 
@@ -71,9 +71,11 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
 }
 
 export class InteractiveScene implements Scene<Metadata> {
-  private readonly conclusions: Conclusion[] = []
-
-  constructor(private readonly handle: CommandLine, private readonly suspect: () => Promise<Suspect<Metadata>[]>) {}
+  constructor(
+    private readonly handle: CommandLine,
+    private readonly suspect: () => Promise<Suspect<Metadata>[]>,
+    private readonly context: BisectContext,
+  ) {}
 
   async suspects(): Promise<Suspect<Metadata>[]> {
     return this.suspect()
@@ -82,9 +84,9 @@ export class InteractiveScene implements Scene<Metadata> {
   async check(candidate: Suspect<Metadata>): Promise<Result> {
     return new Promise((resolve) => {
       const onSelection = (result: Result) => {
-        this.conclusions.push({ result, version: candidate.version })
+        this.context.add({ result, version: candidate.version })
         resolve(result)
-        this.handle.rerender({ toCheck: undefined, conclusions: [...this.conclusions] })
+        this.handle.rerender({ toCheck: undefined })
       }
       this.handle.rerender({ toCheck: candidate, onResult: onSelection })
     })

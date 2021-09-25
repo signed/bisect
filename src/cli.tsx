@@ -3,6 +3,7 @@ import { bisect } from './bisect/bisect'
 import { readTagsFromGit } from './bisect/example'
 import { Suspect } from './bisect/suspect'
 import { CommandLine } from './cli/CommandLine'
+import { Conclusion } from './cli/conclusion'
 import { InteractiveScene } from './cli/InteractiveBisect'
 
 export type Metadata = {
@@ -30,8 +31,21 @@ const suspects = async () =>
       }
     })
 
+export interface BisectContext {
+  add(conclusion: Conclusion): void
+}
 const cli = new CommandLine()
-const scene = new InteractiveScene(cli, suspects)
+const conclusions: Conclusion[] = []
+const scene = new InteractiveScene(
+  cli,
+  suspects,
+  new (class implements BisectContext {
+    add(conclusion: Conclusion): void {
+      conclusions.push(conclusion)
+      cli.rerender({ conclusions: [...conclusions] })
+    }
+  })(),
+)
 
 bisect('19.38.85', '19.38.129', scene).then((result) => {
   console.log(JSON.stringify(result, null, 2))
