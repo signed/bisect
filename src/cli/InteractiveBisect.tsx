@@ -1,6 +1,6 @@
 import { Box, Static, Text, useApp } from 'ink'
 import SelectInput from 'ink-select-input'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Result, Scene } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
@@ -22,6 +22,7 @@ export type Action = Result
 
 export interface InteractiveBisectProps {
   done: boolean
+  results: CheckResult[]
   onResult?: (item: Result) => void
   toCheck?: Suspect
 }
@@ -43,7 +44,6 @@ const emojiFor = (result: CheckResult): string => {
 }
 
 export const InteractiveBisect = (props: InteractiveBisectProps) => {
-  const [checkResults, setCheckResults] = useState<CheckResult[]>([])
   const { exit } = useApp()
 
   const { done } = props
@@ -54,14 +54,12 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
   }, [done, exit])
 
   const onSelection = (item: Item<Action>) => {
-    const result = item.value
-    setCheckResults((cur) => [...cur, { result, version: props.toCheck?.version ?? 'should not happen' }])
     props.onResult?.(item.value)
   }
 
   return (
     <>
-      <Static items={checkResults}>
+      <Static items={props.results}>
         {(result) => (
           <Box key={result.version}>
             <Text color="green">{emojiFor(result) + ' ' + result.version}</Text>
@@ -78,6 +76,8 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
 }
 
 export class InteractiveScene implements Scene<Metadata> {
+  private readonly checkResults: CheckResult[] = []
+
   constructor(private readonly handle: CommandLine, private readonly suspect: () => Promise<Suspect<Metadata>[]>) {}
 
   async suspects(): Promise<Suspect<Metadata>[]> {
@@ -87,7 +87,9 @@ export class InteractiveScene implements Scene<Metadata> {
   async check(candidate: Suspect<Metadata>): Promise<Result> {
     return new Promise((resolve) => {
       const onSelection = (result: Result) => {
+        this.checkResults.push({ result, version: candidate.version })
         resolve(result)
+        this.handle.rerender({ toCheck: undefined, results: [...this.checkResults] })
       }
       this.handle.rerender({ toCheck: candidate, onResult: onSelection })
     })

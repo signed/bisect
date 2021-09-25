@@ -35,6 +35,6 @@ const scene = new InteractiveScene(cli, suspects)
 
 bisect('19.38.85', '19.38.129', scene).then((result) => {
   console.log(JSON.stringify(result, null, 2))
-  cli.render({ done: true })
+  cli.rerender({ done: true })
 })
-cli.render({ done: false })
+cli.render({ done: false, results: [] })
