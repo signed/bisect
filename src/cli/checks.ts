@@ -42,7 +42,7 @@ export const interactiveCheck = <T extends object>(context: BisectContext, comma
         resolve(result)
         commandLine.rerender({ toCheck: undefined })
       }
-      commandLine.rerender({ toCheck: candidate.version, onResult: onSelection })
+      context.check(candidate.version, onSelection)
     })
   }
   return bound

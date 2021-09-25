@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import { Result, Scene } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
-import { BisectContext, Metadata } from '../cli'
+import { BisectContext, Metadata, OnResult } from '../cli'
 import { interactiveCheck } from './checks'
 import { CommandLine } from './CommandLine'
 import { Conclusion } from './conclusion'
@@ -25,7 +25,7 @@ type Action = Result
 export interface InteractiveBisectProps {
   done: boolean
   conclusions: Conclusion[]
-  onResult?: (item: Result) => void
+  onResult?: OnResult
   toCheck?: Version
 }
 
