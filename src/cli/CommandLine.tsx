@@ -13,10 +13,10 @@ export class CommandLine {
   }
 
   rerender(appProps: Partial<InteractiveBisectProps> = {}) {
-    this.appProps = { ...(this.appProps as InteractiveBisectProps), ...appProps }
-    if (!this.instance) {
+    if (this.appProps === undefined || this.instance === undefined) {
       throw new Error('You have to call render first')
     }
+    this.appProps = { ...this.appProps, ...appProps }
     const theApp = <InteractiveBisect {...this.appProps} />
     this.instance.rerender(theApp)
   }

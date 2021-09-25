@@ -22,18 +22,18 @@ export type Action = Result
 
 export interface InteractiveBisectProps {
   done: boolean
-  results: CheckResult[]
+  conclusions: Conclusion[]
   onResult?: (item: Result) => void
   toCheck?: Suspect
 }
 
-interface CheckResult {
+interface Conclusion {
   version: Version
   result: Result
 }
 
-const emojiFor = (result: CheckResult): string => {
-  switch (result.result) {
+const emojiFor = (conclusion: Conclusion): string => {
+  switch (conclusion.result) {
     case 'good':
       return '✅'
     case 'bad':
@@ -59,7 +59,7 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
 
   return (
     <>
-      <Static items={props.results}>
+      <Static items={props.conclusions}>
         {(result) => (
           <Box key={result.version}>
             <Text color="green">{emojiFor(result) + ' ' + result.version}</Text>
@@ -76,7 +76,7 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
 }
 
 export class InteractiveScene implements Scene<Metadata> {
-  private readonly checkResults: CheckResult[] = []
+  private readonly conclusions: Conclusion[] = []
 
   constructor(private readonly handle: CommandLine, private readonly suspect: () => Promise<Suspect<Metadata>[]>) {}
 
@@ -87,9 +87,9 @@ export class InteractiveScene implements Scene<Metadata> {
   async check(candidate: Suspect<Metadata>): Promise<Result> {
     return new Promise((resolve) => {
       const onSelection = (result: Result) => {
-        this.checkResults.push({ result, version: candidate.version })
+        this.conclusions.push({ result, version: candidate.version })
         resolve(result)
-        this.handle.rerender({ toCheck: undefined, results: [...this.checkResults] })
+        this.handle.rerender({ toCheck: undefined, conclusions: [...this.conclusions] })
       }
       this.handle.rerender({ toCheck: candidate, onResult: onSelection })
     })
