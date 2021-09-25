@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import { Result, Scene } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
 import { BisectContext, Metadata } from '../cli'
+import { interactiveCheck } from './checks'
 import { CommandLine } from './CommandLine'
 import { Conclusion } from './conclusion'
 
@@ -82,13 +83,12 @@ export class InteractiveScene implements Scene<Metadata> {
   }
 
   async check(candidate: Suspect<Metadata>): Promise<Result> {
-    return new Promise((resolve) => {
-      const onSelection = (result: Result) => {
-        this.context.add({ result, version: candidate.version })
-        resolve(result)
-        this.handle.rerender({ toCheck: undefined })
+    const flup = interactiveCheck(this.context, this.handle)(candidate)
+    return flup.then((checkResult) => {
+      if (checkResult === 'passed') {
+        throw new Error(`could not come to a conclusion about ${candidate.version}`)
       }
-      this.handle.rerender({ toCheck: candidate, onResult: onSelection })
+      return checkResult
     })
   }
 }
