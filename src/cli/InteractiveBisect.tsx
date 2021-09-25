@@ -22,7 +22,7 @@ export type Action = Result
 
 export interface InteractiveBisectProps {
   done: boolean
-  onSelection?: (item: Item<Action>) => void
+  onResult?: (item: Result) => void
   toCheck?: Suspect
 }
 
@@ -56,7 +56,7 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
   const onSelection = (item: Item<Action>) => {
     const result = item.value
     setCheckResults((cur) => [...cur, { result, version: props.toCheck?.version ?? 'should not happen' }])
-    props.onSelection?.(item)
+    props.onResult?.(item.value)
   }
 
   return (
@@ -86,10 +86,10 @@ export class InteractiveScene implements Scene<Metadata> {
 
   async check(candidate: Suspect<Metadata>): Promise<Result> {
     return new Promise((resolve) => {
-      const onSelection = (item: Item<Action>) => {
-        resolve(item.value)
+      const onSelection = (result: Result) => {
+        resolve(result)
       }
-      this.handle.rerender({ toCheck: candidate, onSelection })
+      this.handle.rerender({ toCheck: candidate, onResult: onSelection })
     })
   }
 }
