@@ -3,6 +3,7 @@ import SelectInput from 'ink-select-input'
 import React, { useEffect } from 'react'
 import { Result, Scene } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
+import { Version } from '../bisect/version'
 import { BisectContext, Metadata } from '../cli'
 import { interactiveCheck } from './checks'
 import { CommandLine } from './CommandLine'
@@ -25,7 +26,7 @@ export interface InteractiveBisectProps {
   done: boolean
   conclusions: Conclusion[]
   onResult?: (item: Result) => void
-  toCheck?: Suspect
+  toCheck?: Version
 }
 
 const emojiFor = (conclusion: Conclusion): string => {
@@ -63,7 +64,7 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
         )}
       </Static>
       <Text>
-        Check <Text color="yellow">{props.toCheck?.version ?? 'waiting'}</Text>
+        Check <Text color="yellow">{props.toCheck ?? 'waiting'}</Text>
       </Text>
 
       {props.toCheck && props.onResult && <SelectInput items={items} onSelect={onSelection} />}
