@@ -36,26 +36,30 @@ const suspects = async () =>
 export type OnResult = (result: Result) => void
 
 export interface BisectContext {
-  add(conclusion: Conclusion): void
   check(toCheck: Version, onResult: OnResult): void
+
+  conclude(version: Version, result: Result): void
 }
 
 class Presenter implements BisectContext {
   private readonly conclusions: Conclusion[] = []
+
   constructor(private readonly cli: CommandLine) {}
-  add(conclusion: Conclusion): void {
-    this.conclusions.push(conclusion)
-    this.cli.rerender({ conclusions: [...this.conclusions] })
-  }
 
   check(toCheck: Version, onResult: OnResult): void {
     this.cli.rerender({ toCheck, onResult })
+  }
+
+  conclude(version: Version, result: Result): void {
+    const conclusion = { result, version }
+    this.conclusions.push(conclusion)
+    this.cli.rerender({ toCheck: undefined, conclusions: [...this.conclusions] })
   }
 }
 
 const cli = new CommandLine()
 const presenter = new Presenter(cli)
-const scene = new InteractiveScene(cli, suspects, presenter)
+const scene = new InteractiveScene(suspects, presenter)
 
 bisect('19.38.85', '19.38.129', scene).then((result) => {
   console.log(JSON.stringify(result, null, 2))
