@@ -34,15 +34,30 @@ export const properlyDeployed = <T extends object>(urlFor: UrlProvider<T>, extra
   return bound
 }
 
-export const interactiveCheck = <T extends object>(suspect: BisectContext, open: Open<T> = () => {}): Check<T> => {
-  return async (candidate: Suspect<T>) => {
+export const interactiveCheck = <T extends object>(context: BisectContext, open: Open<T> = () => {}): Check<T> => {
+  return async (suspect) => {
     return new Promise(async (resolve) => {
       const onSelection = (result: Result) => {
-        suspect.conclude(candidate.version, result)
+        context.conclude(suspect.version, result)
         resolve(result)
       }
-      await open(candidate)
-      suspect.check(candidate.version, onSelection)
+      await open(suspect)
+      context.check(suspect.version, onSelection)
     })
+  }
+}
+
+export const inSequence = <T extends object>(...checks: Check<T>[]): Check<T> => {
+  return (suspect: Suspect<T>) => {
+    const inOrder = async (): Promise<CheckResult> => {
+      for (const check of checks) {
+        const outcome = await check(suspect)
+        if (outcome !== 'passed') {
+          return outcome
+        }
+      }
+      throw new Error(`could not come to a conclusion about ${suspect.version}`)
+    }
+    return inOrder()
   }
 }

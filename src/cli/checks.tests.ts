@@ -1,7 +1,7 @@
 import '@relmify/jest-fp-ts'
 import { left, right } from 'fp-ts/Either'
 import { serverRule } from './backend'
-import { properlyDeployed } from './checks'
+import { Check, inSequence, properlyDeployed } from './checks'
 
 export const { deploy, connectionProblems } = serverRule()
 
@@ -33,3 +33,25 @@ const check = properlyDeployed(
     return right(version)
   },
 )
+
+test('empty check fails', () => {
+  const check = inSequence()
+  const version = '1'
+  return expect(check(suspectWithVersion(version))).rejects.toThrow('could not come to a conclusion about 1')
+})
+
+test('return result from the first check that returns one', () => {
+  const skip: Check<{}> = async () => 'skip'
+  const check = inSequence<{}>(skip)
+  return expect(check(anySuspect())).resolves.toBe('skip')
+})
+
+test('continue with next check on a check returning passed', () => {
+  const good: Check<{}> = async () => 'good'
+  const passed: Check<{}> = async () => 'passed'
+  const check = inSequence<{}>(passed, good)
+  return expect(check(anySuspect())).resolves.toBe('good')
+})
+
+const anySuspect = () => suspectWithVersion('42')
+const suspectWithVersion = (version: string) => ({ version: version })
