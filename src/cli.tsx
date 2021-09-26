@@ -2,6 +2,7 @@
 import { bisect } from './bisect/bisect'
 import { readTagsFromGit } from './bisect/example'
 import { Suspect } from './bisect/suspect'
+import { inSequence, interactiveCheck } from './cli/checks'
 import { CommandLine } from './cli/CommandLine'
 import { InteractiveScene } from './cli/InteractiveBisect'
 import { Presenter } from './cli/Presenter'
@@ -33,7 +34,9 @@ const suspects = async () =>
 
 const cli = new CommandLine()
 const presenter = new Presenter(cli)
-const scene = new InteractiveScene(suspects, presenter)
+
+const check = interactiveCheck(presenter)
+const scene = new InteractiveScene(suspects, inSequence(check))
 
 bisect('19.38.85', '19.38.129', scene).then((result) => {
   console.log(JSON.stringify(result, null, 2))
