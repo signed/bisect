@@ -1,4 +1,4 @@
-import { bisectSuccess } from './bisect.fixture'
+import { bisectSuccess } from '../bisect/bisect.fixture'
 import { ExampleScene } from './example'
 
 test('solve production example', async () => {

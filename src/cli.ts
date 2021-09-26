@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { bisect } from './bisect/bisect'
-import { suspects } from './bisect/example'
+import { suspects } from './example/example'
 import { inSequence, interactiveCheck } from './cli/checks'
 import { CommandLine } from './cli/CommandLine'
 import { InteractiveScene } from './cli/InteractiveBisect'
