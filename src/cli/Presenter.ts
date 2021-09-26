@@ -9,6 +9,10 @@ export class Presenter implements BisectContext {
 
   constructor(private readonly cli: CommandLine) {}
 
+  initialize(): void {
+    this.cli.render({ done: false, conclusions: [] })
+  }
+
   check(toCheck: Version): void {
     this.cli.rerender({ toCheck })
   }

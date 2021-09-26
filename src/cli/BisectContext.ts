@@ -4,6 +4,8 @@ import { Version } from '../bisect/version'
 export type OnResult = (result: Result) => void
 
 export interface BisectContext {
+  initialize(): void
+
   check(toCheck: Version): void
 
   addOnResult(listener: OnResult): void
