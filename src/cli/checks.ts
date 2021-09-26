@@ -4,6 +4,7 @@ import { Result } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
 import { BisectContext } from './BisectContext'
+import { Open } from './opens'
 
 export type VersionExtractor = (html: string) => Either<string, Version>
 export type UrlProvider<T extends object> = (suspect: Suspect<T>) => string
@@ -33,10 +34,8 @@ export const properlyDeployed = <T extends object>(urlFor: UrlProvider<T>, extra
   return bound
 }
 
-export type Open<T extends object> = (suspect: Suspect<T>) => void
-
 export const interactiveCheck = <T extends object>(suspect: BisectContext, open: Open<T> = () => {}): Check<T> => {
-  const bound: Check<T> = async (candidate: Suspect<T>) => {
+  return async (candidate: Suspect<T>) => {
     return new Promise(async (resolve) => {
       const onSelection = (result: Result) => {
         suspect.conclude(candidate.version, result)
@@ -46,5 +45,4 @@ export const interactiveCheck = <T extends object>(suspect: BisectContext, open:
       suspect.check(candidate.version, onSelection)
     })
   }
-  return bound
 }

@@ -6,6 +6,7 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "bisect": "yarn ts-node src/cli.tsx",
+    "vendor": "yarn ts-node src/local/cli.ts",
     "test": "jest"
   },
   "dependencies": {
@@ -14,6 +15,7 @@
     "ink": "3.0.9",
     "ink-select-input": "4.2.0",
     "needle": "3.0.0",
+    "open": "8.2.1",
     "react": "17.0.2"
   },
   "devDependencies": {
