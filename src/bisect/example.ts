@@ -27,9 +27,9 @@ export class ExampleScene implements Scene<Metadata> {
       })
   }
 
-  async check(candidate: Suspect<Metadata>): Promise<Result> {
-    this.checkedVersions.push(candidate.version)
-    return runAutomatedCheckAndReportBackFor(candidate)
+  async check(suspect: Suspect<Metadata>): Promise<Result> {
+    this.checkedVersions.push(suspect.version)
+    return runAutomatedCheckAndReportBackFor(suspect)
   }
 }
 
@@ -88,7 +88,7 @@ export const readTagsFromGit = () => {
 `
 }
 
-export const runAutomatedCheckAndReportBackFor = (candidate: { version: Version } & Metadata) => {
-  const versionToCheck = parseInt(candidate.version.split('.')[2] ?? '', 10)
+export const runAutomatedCheckAndReportBackFor = (suspect: { version: Version } & Metadata) => {
+  const versionToCheck = parseInt(suspect.version.split('.')[2] ?? '', 10)
   return versionToCheck < 115 ? 'good' : 'bad'
 }

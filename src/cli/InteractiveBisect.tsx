@@ -81,11 +81,11 @@ export class InteractiveScene implements Scene<Metadata> {
     return this.suspect()
   }
 
-  async check(candidate: Suspect<Metadata>): Promise<Result> {
-    const flup = this._check(candidate)
+  async check(suspect: Suspect<Metadata>): Promise<Result> {
+    const flup = this._check(suspect)
     return flup.then((checkResult) => {
       if (checkResult === 'passed') {
-        throw new Error(`could not come to a conclusion about ${candidate.version}`)
+        throw new Error(`could not come to a conclusion about ${suspect.version}`)
       }
       return checkResult
     })
