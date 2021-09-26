@@ -4,6 +4,7 @@ import { Result } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
 import { BisectContext } from './BisectContext'
+import { Deferred } from './deferred'
 import { Open } from './opens'
 
 export type VersionExtractor = (html: string) => Either<string, Version>
@@ -36,14 +37,13 @@ export const properlyDeployed = <T extends object>(urlFor: UrlProvider<T>, extra
 
 export const interactiveCheck = <T extends object>(context: BisectContext, open: Open<T> = () => {}): Check<T> => {
   return async (suspect) => {
-    return new Promise(async (resolve) => {
-      const onResult = (result: Result) => {
-        context.clearOnResult()
-        resolve(result)
-      }
-      context.addOnResult(onResult)
-      await open(suspect)
+    const deferred = new Deferred<CheckResult>()
+    context.addOnResult((result: Result) => {
+      context.clearOnResult()
+      deferred.resolve(result)
     })
+    await open(suspect)
+    return deferred.promise
   }
 }
 
