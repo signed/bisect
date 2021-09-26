@@ -88,7 +88,7 @@ export const readTagsFromGit = () => {
 `
 }
 
-export const runAutomatedCheckAndReportBackFor = (suspect: { version: Version } & Metadata) => {
+const runAutomatedCheckAndReportBackFor = (suspect: { version: Version } & Metadata) => {
   const versionToCheck = parseInt(suspect.version.split('.')[2] ?? '', 10)
   return versionToCheck < 115 ? 'good' : 'bad'
 }
