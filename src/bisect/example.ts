@@ -3,28 +3,31 @@ import { Result, Scene } from './scene'
 import { Suspect } from './suspect'
 import { Version } from './version'
 
+export const suspects = async () =>
+  readTagsFromGit()
+    .trim()
+    .split('\n')
+    .reverse()
+    .map((line): Suspect<Metadata> => {
+      const parts = line.split(' ')
+      const [date, tag, hash] = parts
+      if (date === undefined || tag === undefined || hash === undefined) {
+        throw new Error('should not happen')
+      }
+      const start = tag.lastIndexOf('@')
+      const version = tag.substring(start + 1)
+      return {
+        version,
+        hash,
+        date,
+      }
+    })
+
 export class ExampleScene implements Scene<Metadata> {
   readonly checkedVersions: Version[] = []
 
   async suspects(): Promise<Suspect<Metadata>[]> {
-    return readTagsFromGit()
-      .trim()
-      .split('\n')
-      .reverse()
-      .map((line): Suspect<Metadata> => {
-        const parts = line.split(' ')
-        const [date, tag, hash] = parts
-        if (date === undefined || tag === undefined || hash === undefined) {
-          throw new Error('should not happen')
-        }
-        const start = tag.lastIndexOf('@')
-        const version = tag.substring(start + 1)
-        return {
-          version,
-          hash,
-          date,
-        }
-      })
+    return suspects()
   }
 
   async check(suspect: Suspect<Metadata>): Promise<Result> {
