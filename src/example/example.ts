@@ -3,6 +3,19 @@ import { Result, Scene } from '../bisect/scene'
 import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
 
+export class ExampleScene implements Scene<Metadata> {
+  readonly checkedVersions: Version[] = []
+
+  async suspects(): Promise<Suspect<Metadata>[]> {
+    return suspects()
+  }
+
+  async check(suspect: Suspect<Metadata>): Promise<Result> {
+    this.checkedVersions.push(suspect.version)
+    return runAutomatedCheckAndReportBackFor(suspect)
+  }
+}
+
 export const suspects = async () =>
   readTagsFromGit()
     .trim()
@@ -23,18 +36,6 @@ export const suspects = async () =>
       }
     })
 
-export class ExampleScene implements Scene<Metadata> {
-  readonly checkedVersions: Version[] = []
-
-  async suspects(): Promise<Suspect<Metadata>[]> {
-    return suspects()
-  }
-
-  async check(suspect: Suspect<Metadata>): Promise<Result> {
-    this.checkedVersions.push(suspect.version)
-    return runAutomatedCheckAndReportBackFor(suspect)
-  }
-}
 
 export const readTagsFromGit = () => {
   return `
