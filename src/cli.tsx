@@ -36,7 +36,7 @@ const cli = new CommandLine()
 const presenter = new Presenter(cli)
 
 const check = interactiveCheck(presenter)
-const scene = new InteractiveScene(suspects, inSequence(check))
+const scene = new InteractiveScene(presenter, suspects, inSequence(check))
 
 bisect('19.38.85', '19.38.129', scene).then((result) => {
   console.log(JSON.stringify(result, null, 2))

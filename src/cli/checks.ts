@@ -37,12 +37,12 @@ export const properlyDeployed = <T extends object>(urlFor: UrlProvider<T>, extra
 export const interactiveCheck = <T extends object>(context: BisectContext, open: Open<T> = () => {}): Check<T> => {
   return async (suspect) => {
     return new Promise(async (resolve) => {
-      const onSelection = (result: Result) => {
-        context.conclude(suspect.version, result)
+      const onResult = (result: Result) => {
+        context.clearOnResult()
         resolve(result)
       }
+      context.addOnResult(onResult)
       await open(suspect)
-      context.check(suspect.version, onSelection)
     })
   }
 }
