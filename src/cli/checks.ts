@@ -33,14 +33,17 @@ export const properlyDeployed = <T extends object>(urlFor: UrlProvider<T>, extra
   return bound
 }
 
-export const interactiveCheck = <T extends object>(context: BisectContext): Check<T> => {
+export type Open<T extends object> = (suspect: Suspect<T>) => void
+
+export const interactiveCheck = <T extends object>(suspect: BisectContext, open: Open<T> = () => {}): Check<T> => {
   const bound: Check<T> = async (candidate: Suspect<T>) => {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       const onSelection = (result: Result) => {
-        context.conclude(candidate.version, result)
+        suspect.conclude(candidate.version, result)
         resolve(result)
       }
-      context.check(candidate.version, onSelection)
+      await open(candidate)
+      suspect.check(candidate.version, onSelection)
     })
   }
   return bound
