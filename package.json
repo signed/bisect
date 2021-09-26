@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "bisect": "yarn ts-node src/cli.tsx",
+    "bisect": "yarn ts-node src/cli.ts",
     "vendor": "yarn ts-node src/local/cli.ts",
     "test": "jest"
   },
