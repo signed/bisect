@@ -5,7 +5,7 @@ import { Suspect } from '../bisect/suspect'
 import { Version } from '../bisect/version'
 import { BisectContext } from './BisectContext'
 import { Deferred } from './deferred'
-import { Open } from './opens'
+import { Open } from './open-browser'
 
 export type VersionExtractor = (html: string) => Either<string, Version>
 export type UrlProvider<T extends object> = (suspect: Suspect<T>) => string
