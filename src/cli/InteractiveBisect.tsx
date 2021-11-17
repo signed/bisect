@@ -17,9 +17,9 @@ interface Item<V> {
 }
 
 const items: Item<Action>[] = [
-  { label: 'mark as good', value: 'good' },
-  { label: 'mark as bad', value: 'bad' },
-  { label: 'can not tell', value: 'skip' },
+  { label: 'mark as [g]ood', value: 'good' },
+  { label: 'mark as [b]ad', value: 'bad' },
+  { label: 'can not [t]ell', value: 'skip' },
 ]
 type Action = Result
 
@@ -51,12 +51,24 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
     }
   }, [done, exit])
   useInput((input, _key) => {
-    if (input === 'q') {
-      exit()
+    if (input === 'g') {
+      props.onResult?.('good')
+      return
+    }
+    if (input === 'b') {
+      props.onResult?.('bad')
+      return
+    }
+    if (input === 't') {
+      props.onResult?.('skip')
+      return
     }
     if (input === 'c') {
       clipboard.writeSync(props.toCheck ?? '')
       return
+    }
+    if (input === 'q') {
+      exit()
     }
   })
 
