@@ -1,4 +1,4 @@
-import { Box, Static, Text, useApp } from 'ink'
+import { Box, Static, Text, useApp, useInput } from 'ink'
 import SelectInput from 'ink-select-input'
 import React, { useEffect } from 'react'
 import { Result, Scene } from '../bisect/scene'
@@ -8,6 +8,7 @@ import { Metadata } from '../cli'
 import { BisectContext, OnResult } from './BisectContext'
 import { Check } from './checks'
 import { Conclusion } from './conclusion'
+import clipboard from 'clipboardy'
 
 interface Item<V> {
   key?: string
@@ -49,6 +50,15 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
       exit()
     }
   }, [done, exit])
+  useInput((input, _key) => {
+    if (input === 'q') {
+      exit()
+    }
+    if (input === 'c') {
+      clipboard.writeSync(props.toCheck ?? '')
+      return
+    }
+  })
 
   const onSelection = (item: Item<Action>) => {
     props.onResult?.(item.value)

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@types/needle": "2.5.2",
+    "clipboardy": "2.3.0",
     "fp-ts": "2.11.5",
     "ink": "3.2.0",
     "ink-select-input": "4.2.1",
