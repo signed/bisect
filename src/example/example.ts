@@ -36,7 +36,6 @@ export const suspects = async () =>
       }
     })
 
-
 export const readTagsFromGit = () => {
   return `
 2021-07-30 @production/application@19.38.129 a677a8d86a4cb5ec82df4011deb73dc829e5f2af  -
