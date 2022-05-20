@@ -81,13 +81,13 @@ export const InteractiveBisect = (props: InteractiveBisectProps) => {
       <Static items={props.conclusions}>
         {(result) => (
           <Box key={result.version}>
-            <Text color="green">{emojiFor(result) + ' ' + result.version}</Text>
+            <Text color='green'>{emojiFor(result) + ' ' + result.version}</Text>
           </Box>
         )}
       </Static>
       {!done && (
         <Text>
-          Check <Text color="yellow">{props.toCheck ?? 'waiting'}</Text>
+          Check <Text color='yellow'>{props.toCheck ?? 'waiting'}</Text>
         </Text>
       )}
 
@@ -101,7 +101,8 @@ export class InteractiveScene implements Scene<Metadata> {
     private readonly context: BisectContext,
     private readonly suspect: () => Promise<Suspect<Metadata>[]>,
     private readonly _check: Check<Metadata>,
-  ) {}
+  ) {
+  }
 
   async suspects(): Promise<Suspect<Metadata>[]> {
     return this.suspect()

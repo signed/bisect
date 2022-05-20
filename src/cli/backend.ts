@@ -19,7 +19,7 @@ export const serverRule = () => {
   })
   const deploy = (version: string, url: string) => {
     server.use(
-      rest.get<{}, string>(url, (_req, res, ctx) => {
+      rest.get<{}>(url, (_req, res, ctx) => {
         return res(html('version:' + version), ctx.status(200))
       }),
     )
