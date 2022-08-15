@@ -7,11 +7,18 @@ import { Version } from './version'
 
 type BisectOutcome<T extends object = {}> = BisectResult<T> | BisectError
 type BisectResult<T extends object = {}> = { lastGood: Suspect<T>; firstBad: Suspect<T> }
-type BisectError =
-  | 'knownGood and knowBad are the same'
-  | 'good version not in suspects'
-  | 'bad version not in suspects'
-  | 'bad version before good version'
+const bisectErrors = [
+  'knownGood and knowBad are the same',
+  'good version not in suspects',
+  'bad version not in suspects',
+  'bad version before good version',
+] as const
+
+type BisectError = typeof bisectErrors[number]
+
+export const isBisectError = (outcome: BisectOutcome): outcome is BisectError => {
+  return typeof outcome === 'string' && bisectErrors.includes(outcome)
+}
 
 export const bisect = async <T extends object>(
   knownGood: Version,
