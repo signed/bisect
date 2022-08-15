@@ -1,11 +1,11 @@
-import { bisect } from './bisect'
+import { bisect, isBisectError } from './bisect'
 import { Result, Scene } from './scene'
 import { Suspect } from './suspect'
 import { Version } from './version'
 
 export const bisectSuccess = async <T extends object>(knownGood: string, knownBad: string, scene: Scene<T>) => {
   const result = await bisect(knownGood, knownBad, scene)
-  if (typeof result === 'string') {
+  if (isBisectError(result)) {
     throw new Error('expected bisect to succeed')
   }
   return result
@@ -13,7 +13,7 @@ export const bisectSuccess = async <T extends object>(knownGood: string, knownBa
 
 export const bisectFail = async <T extends object>(knownGood: Version, knownBad: Version, scene: Scene<T>) => {
   const result = await bisect(knownGood, knownBad, scene)
-  if (typeof result !== 'string') {
+  if (!isBisectError(result)) {
     throw new Error('expected bisect to fail')
   }
   return result

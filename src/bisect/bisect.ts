@@ -24,7 +24,7 @@ export const bisect = async <T extends object>(
   knownGood: Version,
   knownBad: Version,
   scene: Scene<T>,
-): Promise<BisectOutcome> => {
+): Promise<BisectOutcome<T>> => {
   const validationResult = validateInput(knownGood, knownBad, await scene.suspects())
   if (isLeft(validationResult)) {
     return validationResult.left
